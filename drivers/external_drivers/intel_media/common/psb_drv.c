@@ -79,7 +79,15 @@
 
 #include <linux/HWVersion.h>
 
+#ifdef CONFIG_A500CG
 
+ extern int Read_LCD_ID(void);
+ extern int Read_PROJ_ID(void);
+ 
+ 
+ u8 panel_name_FW[PANEL_NAME_MAX_LEN+1] = {0};
+ static u8 *lcd_unique_id;
+#endif
 struct workqueue_struct *te_wq;
 struct workqueue_struct *vsync_wq;
 
