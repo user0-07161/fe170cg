@@ -39,6 +39,7 @@ static int PROJECT_ID;
 static int HARDWARE_ID;
 static int PCB_ID;
 static int TP_ID;
+static int LCD_ID;
 static int RC_VERSION;
 static int RF_ID;
 static int rc_version;
@@ -139,6 +140,8 @@ int Read_PROJ_ID(void)
 }
 EXPORT_SYMBOL(Read_PROJ_ID);
 
+
+
 static int hardware_id;
 module_param(hardware_id, int, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(HW_VERSION,
@@ -172,6 +175,13 @@ int Read_TP_ID(void)
 }
 EXPORT_SYMBOL(Read_TP_ID);
 
+int Read_LCD_ID(void)
+{
+	pr_debug("LCD_ID = 0x%x \n", LCD_ID);
+	return LCD_ID;
+}
+EXPORT_SYMBOL(Read_LCD_ID);
+
 static int sfi_parse_oemr(struct sfi_table_header *table)
 {
 #ifdef CONFIG_ME560CG
@@ -183,6 +193,7 @@ static int sfi_parse_oemr(struct sfi_table_header *table)
         HARDWARE_ID = pentry->hardware_id;
         PROJECT_ID = pentry->project_id;
         TP_ID = pentry->touch_id;
+		LCD_ID = pentry->lcd_id;
         pr_info("Hardware ID = %x, Project ID = %x, TP ID = %d\n", HARDWARE_ID, PROJECT_ID, TP_ID);
         switch (HARDWARE_ID)
         {
@@ -231,6 +242,7 @@ static int sfi_parse_oemr(struct sfi_table_header *table)
 	PROJECT_ID = pentry->Project_ID;
 	TP_ID = pentry->TP_ID;
 	RC_VERSION = pentry->IFWI_RC;
+	LCD_ID = pentry->LCD_ID;
 	RF_ID = pentry->RF_ID;
 	PCB_ID = pentry->TP_ID | 
 				 pentry->FCAM_ID << 2 | 
@@ -264,6 +276,7 @@ static int sfi_parse_oemr(struct sfi_table_header *table)
 	HARDWARE_ID = pentry->Hardware_ID;
 	PROJECT_ID = pentry->Project_ID;
 	TP_ID = pentry->TP_ID;
+	LCD_ID = pentry->LCD_ID;
 	RC_VERSION = pentry->IFWI_RC;
 
 	PCB_ID = pentry->TP_ID |

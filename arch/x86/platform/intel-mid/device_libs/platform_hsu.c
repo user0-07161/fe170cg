@@ -628,8 +628,8 @@ void intel_mid_hsu_suspend(int port, struct device *dev, irq_handler_t wake_isr)
 		gpio_direction_input(info->wake_gpio);
 		udelay(10);
 		ret = request_irq(gpio_to_irq(info->wake_gpio), info->wake_isr,
-				IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING,
-				info->name, info->dev);
+						  IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING,
+					info->name, info->dev);
 		if (ret)
 			dev_err(info->dev, "failed to register wakeup irq\n");
 	}
@@ -694,12 +694,12 @@ void intel_mid_hsu_suspend_post(int port)
 	if (info->rts_gpio && info->wake_gpio
 		&& info->wake_gpio == info->rx_gpio) {
 		gpio_direction_output(info->rts_gpio, 0);
-		lnw_gpio_set_alt(info->rts_gpio, LNW_GPIO);
-	}
+	lnw_gpio_set_alt(info->rts_gpio, LNW_GPIO);
+		}
 }
 
 void intel_mid_hsu_set_clk(unsigned int m, unsigned int n,
-				void __iomem *addr)
+						   void __iomem *addr)
 {
 	unsigned int param, update_bit;
 
@@ -728,21 +728,21 @@ int intel_mid_hsu_func_to_port(unsigned int func)
 	struct hsu_func2port *tbl = NULL;
 
 	switch (intel_mid_identify_cpu()) {
-	case INTEL_MID_CPU_CHIP_CLOVERVIEW:
-		tbl = &hsu_port_func_id_tlb[hsu_clv][0];
-		break;
-	case INTEL_MID_CPU_CHIP_TANGIER:
-	case INTEL_MID_CPU_CHIP_ANNIEDALE:
-		tbl = &hsu_port_func_id_tlb[hsu_tng][0];
-		break;
-	case INTEL_MID_CPU_CHIP_PENWELL:
-		tbl = &hsu_port_func_id_tlb[hsu_pnw][0];
-		break;
-	default:
-		/* FIXME: VALLEYVIEW2? */
-		/* 1e.3 and 1e.4 */
-		tbl = &hsu_port_func_id_tlb[hsu_vlv2][0];
-		break;
+		case INTEL_MID_CPU_CHIP_CLOVERVIEW:
+			tbl = &hsu_port_func_id_tlb[hsu_clv][0];
+			break;
+		case INTEL_MID_CPU_CHIP_TANGIER:
+		case INTEL_MID_CPU_CHIP_ANNIEDALE:
+			tbl = &hsu_port_func_id_tlb[hsu_tng][0];
+			break;
+		case INTEL_MID_CPU_CHIP_PENWELL:
+			tbl = &hsu_port_func_id_tlb[hsu_pnw][0];
+			break;
+		default:
+			/* FIXME: VALLEYVIEW2? */
+			/* 1e.3 and 1e.4 */
+			tbl = &hsu_port_func_id_tlb[hsu_vlv2][0];
+			break;
 	}
 
 	for (i = 0; i < hsu_port_func_max; i++) {
@@ -785,49 +785,49 @@ static void hsu_platform_clk(enum intel_mid_cpu_type cpu_type)
 	u32 clk_src, clk_div;
 
 	switch (cpu_type) {
-	case INTEL_MID_CPU_CHIP_TANGIER:
-	case INTEL_MID_CPU_CHIP_ANNIEDALE:
-		clock = 100000;
-		clkctl = ioremap_nocache(TNG_CLOCK_CTL, 4);
-		if (!clkctl) {
-			pr_err("tng scu clk ctl ioremap error\n");
-			break;
-		}
+		case INTEL_MID_CPU_CHIP_TANGIER:
+		case INTEL_MID_CPU_CHIP_ANNIEDALE:
+			clock = 100000;
+			clkctl = ioremap_nocache(TNG_CLOCK_CTL, 4);
+			if (!clkctl) {
+				pr_err("tng scu clk ctl ioremap error\n");
+				break;
+			}
 
-		clksc = ioremap_nocache(TNG_CLOCK_SC, 4);
-		if (!clksc) {
-			pr_err("tng scu clk sc ioremap error\n");
+			clksc = ioremap_nocache(TNG_CLOCK_SC, 4);
+			if (!clksc) {
+				pr_err("tng scu clk sc ioremap error\n");
+				iounmap(clkctl);
+				break;
+			}
+
+			clk_src = readl(clkctl);
+			clk_div = readl(clksc);
+
+			if (clk_src & (1 << 16))
+				/* source SCU fabric 100M */
+				clock = clock / ((clk_div & 0x7) + 1);
+			else {
+				if (clk_src & (1 << 31))
+					/* source OSCX2 38.4M */
+					clock = 38400;
+				else
+					/* source OSC clock 19.2M */
+					clock = 19200;
+			}
+
 			iounmap(clkctl);
+			iounmap(clksc);
 			break;
-		}
 
-		clk_src = readl(clkctl);
-		clk_div = readl(clksc);
-
-		if (clk_src & (1 << 16))
-			/* source SCU fabric 100M */
-			clock = clock / ((clk_div & 0x7) + 1);
-		else {
-			if (clk_src & (1 << 31))
-				/* source OSCX2 38.4M */
-				clock = 38400;
-			else
-				/* source OSC clock 19.2M */
-				clock = 19200;
-		}
-
-		iounmap(clkctl);
-		iounmap(clksc);
-		break;
-
-	case INTEL_MID_CPU_CHIP_PENWELL:
-	case INTEL_MID_CPU_CHIP_CLOVERVIEW:
-		clock = 50000;
-		break;
-	default:
-		/* FIXME: VALLEYVIEW2? */
-		clock = 100000;
-		break;
+		case INTEL_MID_CPU_CHIP_PENWELL:
+		case INTEL_MID_CPU_CHIP_CLOVERVIEW:
+			clock = 50000;
+			break;
+		default:
+			/* FIXME: VALLEYVIEW2? */
+			clock = 100000;
+			break;
 	}
 
 	pr_info("hsu core clock %u M\n", clock / 1000);
@@ -836,35 +836,35 @@ static void hsu_platform_clk(enum intel_mid_cpu_type cpu_type)
 static __init int hsu_dev_platform_data(void)
 {
 	switch (intel_mid_identify_cpu()) {
-	case INTEL_MID_CPU_CHIP_CLOVERVIEW:
-		platform_hsu_info = &hsu_port_cfgs[hsu_clv][0];
-		if (INTEL_MID_BOARD(2, PHONE, CLVTP, VB, PRO))
-			hsu_port_gpio_mux =
+		case INTEL_MID_CPU_CHIP_CLOVERVIEW:
+			platform_hsu_info = &hsu_port_cfgs[hsu_clv][0];
+			if (INTEL_MID_BOARD(2, PHONE, CLVTP, VB, PRO))
+				hsu_port_gpio_mux =
 				&hsu_port_pin_cfgs[hsu_clv][hsu_pid_vtb_pro][0];
-		else if (INTEL_MID_BOARD(2, PHONE, CLVTP, VB, ENG))
-			hsu_port_gpio_mux =
+			else if (INTEL_MID_BOARD(2, PHONE, CLVTP, VB, ENG))
+				hsu_port_gpio_mux =
 				&hsu_port_pin_cfgs[hsu_clv][hsu_pid_vtb_eng][0];
-		else
-			hsu_port_gpio_mux =
+			else
+				hsu_port_gpio_mux =
 				&hsu_port_pin_cfgs[hsu_clv][hsu_pid_rhb][0];
-		break;
+			break;
 
-	case INTEL_MID_CPU_CHIP_TANGIER:
-	case INTEL_MID_CPU_CHIP_ANNIEDALE:
-		platform_hsu_info = &hsu_port_cfgs[hsu_tng][0];
-		hsu_port_gpio_mux = &hsu_port_pin_cfgs[hsu_tng][hsu_pid_def][0];
-		break;
+		case INTEL_MID_CPU_CHIP_TANGIER:
+		case INTEL_MID_CPU_CHIP_ANNIEDALE:
+			platform_hsu_info = &hsu_port_cfgs[hsu_tng][0];
+			hsu_port_gpio_mux = &hsu_port_pin_cfgs[hsu_tng][hsu_pid_def][0];
+			break;
 
-	case INTEL_MID_CPU_CHIP_PENWELL:
-		platform_hsu_info = &hsu_port_cfgs[hsu_pnw][0];
-		hsu_port_gpio_mux = &hsu_port_pin_cfgs[hsu_pnw][hsu_pid_def][0];
-		break;
-	default:
-		/* FIXME: VALLEYVIEW2? */
-		platform_hsu_info = &hsu_port_cfgs[hsu_vlv2][0];
-		hsu_port_gpio_mux =
+		case INTEL_MID_CPU_CHIP_PENWELL:
+			platform_hsu_info = &hsu_port_cfgs[hsu_pnw][0];
+			hsu_port_gpio_mux = &hsu_port_pin_cfgs[hsu_pnw][hsu_pid_def][0];
+			break;
+		default:
+			/* FIXME: VALLEYVIEW2? */
+			platform_hsu_info = &hsu_port_cfgs[hsu_vlv2][0];
+			hsu_port_gpio_mux =
 			&hsu_port_pin_cfgs[hsu_vlv2][hsu_pid_def][0];
-		break;
+			break;
 	}
 
 	if (platform_hsu_info == NULL)
@@ -873,7 +873,6 @@ static __init int hsu_dev_platform_data(void)
 	if (hsu_port_gpio_mux == NULL)
 		return -ENODEV;
 
-	hsu_register_board_info(platform_hsu_info);
 	hsu_platform_clk(intel_mid_identify_cpu());
 
 	return 0;
