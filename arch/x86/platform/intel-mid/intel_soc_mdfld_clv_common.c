@@ -19,6 +19,7 @@
  */
 
 #include "intel_soc_pmu.h"
+#include "intel_soc_clv.h"
 
 static int extended_cstate_mode = MID_S0IX_STATE;
 int set_extended_cstate_mode(const char *val, struct kernel_param *kp)
