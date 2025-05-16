@@ -49,7 +49,6 @@ int Read_RC_VERSION(void)
 {
      rc_version = RC_VERSION;
      printk("RC_VERSION = 0x%x \n",RC_VERSION);
-	 intel_mid_set_rc_version(rc_version);
      return RC_VERSION;
 }
 EXPORT_SYMBOL(Read_RC_VERSION);
@@ -71,8 +70,6 @@ int read_SIM_ID(void){
 	PCB_ID &= 0xF7FF;
 	PCB_ID |= sim_id << 11; 
 	printk("SIM detect value is %d\n", sim_id);
-	intel_mid_set_sim_id(sim_id);
-	intel_mid_set_pcb_id(PCB_ID);
 	return sim_id;
 }
 EXPORT_SYMBOL(read_SIM_ID);
@@ -89,7 +86,6 @@ void initialize_VOICE_ID(){
 	intel_scu_ipc_iowrite8(PMIC_GPIO1HV2CTLO, 0x08);
 	voice_id = data & 0x01;
 	printk("voice_id = %d\n", voice_id);
-	intel_mid_set_voice_id(voice_id);
 	return voice_id;
 }
 EXPORT_SYMBOL(initialize_VOICE_ID);
@@ -114,7 +110,6 @@ int Read_RF_ID(void)
 	    printk("RF_ID = 0x%x \n",RF_ID);
 	    rf_id = RF_ID;
 	}
-	intel_mid_set_rf_id(rf_id);
 	return RF_ID;
 }
 EXPORT_SYMBOL(Read_RF_ID);
@@ -140,7 +135,6 @@ int Read_PROJ_ID(void)
 {
         pr_debug("PROJECT_ID = 0x%x \n",PROJECT_ID);
         project_id = PROJECT_ID;
-		intel_mid_set_project_id(project_id);
         return PROJECT_ID;
 }
 EXPORT_SYMBOL(Read_PROJ_ID);
@@ -154,7 +148,6 @@ int Read_HW_ID(void)
 {
         pr_debug("HARDWARE_ID = 0x%x \n",HARDWARE_ID);
         hardware_id = HARDWARE_ID;
-		intel_mid_set_hardware_id(hardware_id);
         return HARDWARE_ID;
 }
 EXPORT_SYMBOL(Read_HW_ID);
@@ -168,7 +161,6 @@ int Read_PCB_ID(void)
 {
         pr_debug("PCB_ID = 0x%x \n",PCB_ID);
         pcb_id = PCB_ID;
-		intel_mid_set_pcb_id(pcb_id);
         return PCB_ID;
 }
 EXPORT_SYMBOL(Read_PCB_ID);
